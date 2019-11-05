@@ -4,7 +4,6 @@ class Board
   def initialize(game)
     @game = game
     @board = []
-
     create(@game)
   end
 

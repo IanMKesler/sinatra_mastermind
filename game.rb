@@ -2,11 +2,33 @@ class Game
   require_relative "board.rb"
   require_relative "player.rb"
 
-  def initialize(game)
+  attr_accessor :turn, :board, :maker, :breaker
+
+  def initialize(game, role)
     @maker = Player.new("maker")
     @breaker = Player.new("breaker")
+    set_role(role)
     @board = Board.new(game)
     @turn = 1
+  end
+
+  def round(pattern)
+    @breaker.pattern = pattern
+    @board.draw(@breaker.pattern.dup, @turn)
+  end
+
+  def win?
+    @breaker.pattern == @maker.pattern ? true : false
+  end
+
+  def hint
+    hints = compare([@maker.pattern, @breaker.pattern])
+    #puts "#{hints[0]} are correct. #{hints[1]} correct numbers but in the wrong position."
+    hints
+  end
+  
+  def generate_secret
+    4.times { @maker.pattern << rand(6) }
   end
 
   def play
@@ -37,6 +59,15 @@ class Game
   end
 
   private
+
+  def set_role(role)
+    case role
+    when "maker"
+      @maker.player = true
+    when "breaker"
+      @breaker.player = true
+    end
+  end
 
   def get_role
     input = gets.strip.upcase
@@ -76,9 +107,7 @@ class Game
     puts @breaker.show_pattern
   end
 
-  def generate_secret
-    4.times { @maker.pattern << rand(6) }
-  end
+  
 
   def get_pattern
     pattern = format_pattern
@@ -95,15 +124,8 @@ class Game
     output.map { |x| x.to_i }
   end
 
-  def win?
-    @breaker.pattern == @maker.pattern ? true : false
-  end
 
-  def hint
-    hints = compare([@maker.pattern, @breaker.pattern])
-    puts "#{hints[0]} are correct. #{hints[1]} correct numbers but in the wrong position."
-    hints
-  end
+  
 
   def compare(input)
     maker_pattern = input[0].dup #Arrays are not POD types, need to make a shallow copy to avoid changing original.
