@@ -16,17 +16,18 @@ post '/role' do
     session[:game] = Game.new("mastermind", @role)
     @game = session[:game]
     @game.generate_secret if @role == "breaker"
-    redirect "/#{@role}"
+    redirect "/game"
 end
 
-get '/breaker' do
+get '/game' do
     @game = session[:game]
+    @role = session[:role]
     if @game.turn > 12
         session[:winner] = "maker"
         redirect "/end" 
     end
-    @hint = @game.hint if @game.turn > 1
-    erb :breaker
+    @hint = @game.turn > 1 ?  @game.hint : [0,0]
+    erb @role.to_sym
 end
 
 post '/breaker' do
@@ -41,18 +42,8 @@ post '/breaker' do
         redirect "/end"
     else
         @game.turn +=1 
-        redirect "/breaker"
+        redirect "/game"
     end
-end
-
-get '/maker' do
-    @game = session[:game]
-    if @game.turn > 12
-        session[:winner] = "maker"
-        redirect "/end" 
-    end
-    @hint = @game.turn > 1 ?  @game.hint : [0,0]
-    erb :maker
 end
 
 post '/maker' do
@@ -71,7 +62,7 @@ post '/maker' do
         redirect "/end"
     else
         @game.turn +=1 
-        redirect "/maker"
+        redirect "/game"
     end
 end
 

@@ -5,7 +5,7 @@
     <%@game.board.board.each_with_index do |row, index|%>
         <p><%=row%><%=" <-" if index == @game.turn-1%></p>
     <%end%>
-    <%if @hint%>
+    <%if @game.turn > 1%>
         <p><%= "#{@hint[0]} are correct. #{@hint[1]} correct numbers but in the wrong position."%></p>
     <%end%>
     <form action="/breaker" method = "post" name="pattern">
