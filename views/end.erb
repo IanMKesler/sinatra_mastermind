@@ -1,7 +1,11 @@
 <html>
 <head></head>
 <body>
-    <h1>You won!</h1>
+    <%if @session[:role] == @session[:winner]%>
+        <p>You won!</p>
+    <%else%>
+        <p>You lost, better luck next time!</p>
+    <%end%>
     <p>The correct code was <%= @game.maker.pattern%></p>
     <form action="/reset" method = post>
         <button type="submit">Play again</button>

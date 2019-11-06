@@ -21,7 +21,10 @@ end
 
 get '/breaker' do
     @game = session[:game]
-    redirect "/lose" if @game.turn > 12
+    if @game.turn > 12
+        session[:winner] = "maker"
+        redirect "/end" 
+    end
     @hint = @game.hint if @game.turn > 1
     erb :breaker
 end
@@ -34,7 +37,8 @@ post '/breaker' do
     @game = session[:game]
     @game.round(@pattern)
     if @game.win?
-        redirect "/win"
+        session[:winner] = "breaker"
+        redirect "/end"
     else
         @game.turn +=1 
         redirect "/breaker"
@@ -43,7 +47,10 @@ end
 
 get '/maker' do
     @game = session[:game]
-    redirect "/win" if @game.turn > 12
+    if @game.turn > 12
+        session[:winner] = "maker"
+        redirect "/end" 
+    end
     @hint = @game.turn > 1 ?  @game.hint : [0,0]
     erb :maker
 end
@@ -60,7 +67,8 @@ post '/maker' do
     @hint = @game.turn > 1 ?  @game.hint : [0,0]
     @game.generate_guess(@hint)
     if @game.win?
-        redirect "/lose"
+        session[:winner] = "breaker"
+        redirect "/end"
     else
         @game.turn +=1 
         redirect "/maker"
@@ -72,13 +80,9 @@ post '/reset' do
     redirect "/"
 end
 
-get "/win" do
+get "/end" do
+    @session = session
     @game = session[:game]
-    erb :win
-end
-
-get "/lose" do
-    @game = session[:game]
-    erb :lose
+    erb :end
 end
 
