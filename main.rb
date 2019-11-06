@@ -73,10 +73,12 @@ post '/reset' do
 end
 
 get "/win" do
-    "You won!"
+    @game = session[:game]
+    erb :win
 end
 
 get "/lose" do
-    "You lost!, better luck next time."
+    @game = session[:game]
+    erb :lose
 end
 

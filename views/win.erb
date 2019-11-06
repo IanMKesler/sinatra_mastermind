@@ -1,0 +1,10 @@
+<html>
+<head></head>
+<body>
+    <h1>You won!</h1>
+    <p>The correct code was <%= @game.maker.pattern%></p>
+    <form action="/reset" method = post>
+        <button type="submit">Play again</button>
+    </form>
+</body>
+</html>
