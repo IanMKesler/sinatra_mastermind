@@ -2,6 +2,54 @@
 <head></head>
 <body>
     <h1>You are the maker!</h1>
+     <%@game.board.board.each_with_index do |row, index|%>
+        <p><%=row%><%=" <-" if index == @game.turn-1%></p>
+    <%end%>
+    <%if @game.turn > 1%>
+        <p><%= "#{@hint[0]} are correct. #{@hint[1]} correct numbers but in the wrong position."%></p>
+    <%end%>
+    <%if @game.turn == 1%>
+        <form action="/maker" method = "post" name="pattern">
+            <select name="first" >
+                <option value=0>0</option>
+                <option value=1>1</option>
+                <option value=2>2</option>
+                <option value=3>3</option>
+                <option value=4>4</option>
+                <option value=5>5</option>
+            </select>
+            <select name="second" >
+                <option value=0>0</option>
+                <option value=1>1</option>
+                <option value=2>2</option>
+                <option value=3>3</option>
+                <option value=4>4</option>
+                <option value=5>5</option>
+            </select>
+            <select name="third" >
+                <option value=0>0</option>
+                <option value=1>1</option>
+                <option value=2>2</option>
+                <option value=3>3</option>
+                <option value=4>4</option>
+                <option value=5>5</option>
+            </select>
+            <select name="fourth" >
+                <option value=0>0</option>
+                <option value=1>1</option>
+                <option value=2>2</option>
+                <option value=3>3</option>
+                <option value=4>4</option>
+                <option value=5>5</option>
+            </select>
+            <button type="submit">set</button>
+        </form>
+    <%else%>
+        <p><%=@game.maker.pattern%></p>
+        <form action="/maker" method = "post">
+            <button type="submit">Continue</button>
+        </form>
+    <%end%>
     <form action="reset" method = "post">
         <button type="submit">Reset</button>
     </form>

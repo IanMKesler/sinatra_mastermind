@@ -26,9 +26,38 @@ class Game
     #puts "#{hints[0]} are correct. #{hints[1]} correct numbers but in the wrong position."
     hints
   end
-  
+
   def generate_secret
     4.times { @maker.pattern << rand(6) }
+  end
+
+  def generate_guess(hints)
+    correct = hints[0]
+    correct_number = hints[1]
+    indexes = [0, 1, 2, 3]
+    positions = indexes.sample(correct)
+    placements = (indexes - positions)
+    correct_number_indexes = placements.sample(correct_number)
+    keep = {}
+
+    @breaker.pattern = [0, 0, 0, 0] if @breaker.pattern == []
+    @breaker.pattern.map!.with_index { |number, index|
+      if positions.include?(index)
+        puts "Keeping #{number} in position #{index + 1}."
+        number
+      else
+        keep[number] = index if correct_number_indexes.include?(index)
+        number = rand(6)
+      end
+    }
+
+    keep.each { |number, index|
+      placement_index = (placements - [index]).sample
+      puts "Putting #{number} in position #{placement_index + 1}."
+      @breaker.pattern[placement_index] = number
+      placements -= [placement_index]
+    }
+    @board.draw(@breaker.pattern.dup, @turn)
   end
 
   def play
@@ -78,34 +107,7 @@ class Game
     input
   end
 
-  def generate_guess(hints)
-    correct = hints[0]
-    correct_number = hints[1]
-    indexes = [0, 1, 2, 3]
-    positions = indexes.sample(correct)
-    placements = (indexes - positions)
-    correct_number_indexes = placements.sample(correct_number)
-    keep = {}
-
-    @breaker.pattern = [0, 0, 0, 0] if @breaker.pattern == []
-    @breaker.pattern.map!.with_index { |number, index|
-      if positions.include?(index)
-        puts "Keeping #{number} in position #{index + 1}."
-        number
-      else
-        keep[number] = index if correct_number_indexes.include?(index)
-        number = rand(6)
-      end
-    }
-
-    keep.each { |number, index|
-      placement_index = (placements - [index]).sample
-      puts "Putting #{number} in position #{placement_index + 1}."
-      @breaker.pattern[placement_index] = number
-      placements -= [placement_index]
-    }
-    puts @breaker.show_pattern
-  end
+  
 
   
 

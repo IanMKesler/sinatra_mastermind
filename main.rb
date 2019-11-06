@@ -16,12 +16,12 @@ post '/role' do
     session[:game] = Game.new("mastermind", @role)
     @game = session[:game]
     @game.generate_secret if @role == "breaker"
-    redirect to("/#{@role}")
+    redirect "/#{@role}"
 end
 
 get '/breaker' do
     @game = session[:game]
-    redirect to("/lose") if @game.turn > 12
+    redirect "/lose" if @game.turn > 12
     @hint = @game.hint if @game.turn > 1
     erb :breaker
 end
@@ -42,12 +42,34 @@ post '/breaker' do
 end
 
 get '/maker' do
+    @game = session[:game]
+    redirect "/win" if @game.turn > 12
+    @hint = @game.turn > 1 ?  @game.hint : [0,0]
     erb :maker
+end
+
+post '/maker' do
+    @game = session[:game]
+    if @game.turn == 1
+        @pattern = params.values
+        @pattern.map! { |value|
+            value.to_i
+        }
+        @game.maker.pattern = @pattern
+    end 
+    @hint = @game.turn > 1 ?  @game.hint : [0,0]
+    @game.generate_guess(@hint)
+    if @game.win?
+        redirect "/lose"
+    else
+        @game.turn +=1 
+        redirect "/maker"
+    end
 end
 
 post '/reset' do
     session.clear
-    redirect to("/")
+    redirect "/"
 end
 
 get "/win" do
